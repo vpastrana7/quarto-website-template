@@ -4,18 +4,14 @@ title: Projects
 
 ## Using Nanobubbles as Contrast for Ultrasound Imaging
 
-<img src="bmode-NLCshot.png" style="height: 100%; width: 100%; object-fit: contain" onclick="window.open('https://www.exnerlab.com/', 'blank');"/>
+<img src="bmode-NLCshot.png" style="height: 100%; width: 100%; object-fit: contain" onclick="window.open(&apos;https://www.exnerlab.com/&apos;, &apos;blank&apos;);"/>
 
 Nanobubbles are lipid shell based nanoparticles that are able to expand and contract in response to an acoustic field. The field, in this case, comes from the ultrasound transducer. Due to their special movements, they are bright and able to be seen on ultrasound images. Their small size does not allow for individual observation, but together they act as an echogenic fluid! This way we hope to gain more insight into the structures of tumors and the potential efficacy of different chemotherapeutics.
 
-----
+------------------------------------------------------------------------
 
 ## Mini Organs in a Dish
 
-<img src="cd144(eb-red)_asma(purp)_whole - denoised.png" style="height: 100%; width: 100%; object-fit: contain" onclick="window.open('https://www.mgulab.org/', 'blank');"/>
+<img src="cd144(eb-red)_asma(purp)_whole - denoised.png" style="height: 100%; width: 100%; object-fit: contain" onclick="window.open(&apos;https://www.mgulab.org/&apos;, &apos;blank&apos;);"/>
 
 During my time working at Cincinnati Children's Hospital, my main project involved using patient derived induced pluripotent stem cells (iPSCs) to develop vascularized organoids. This way we can recreate the same processes that occur in development, but in a dish!
-
-
-
-

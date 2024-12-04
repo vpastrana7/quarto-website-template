@@ -28,17 +28,6 @@ website:
         aria-label: email
         href: "mailto:vmp46@case.edu"  
   
-  
-
-# Don't touch unless you know what you are doing :) ------------
-  search: 
-    location: navbar
-    type: textbox
-  page-footer: 
-    left: |
-      <span class="faux-block">&#169; 2024 Victor Pastrana-Gómez </span>
-    right: |
-      <span class="faux-block"><a href="https://github.com/vpastrana7/vpastrana7.github.io">View source on GitHub</a></span>
 
 project:
   type: website
