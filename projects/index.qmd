@@ -2,14 +2,6 @@
 title: Projects
 ---
 
-## Mini Organs in a Dish
-
-<img src="cd144(eb-red)_asma(purp)_whole - denoised.tif" style="height: 100%; width: 100%; object-fit: contain" onclick="window.open('https://www.mgulab.org/', 'blank');"/>
-
-During my time working at Cincinnati Children's Hospital, my main project involved using patient derived induced pluripotent stem cells (iPSCs) to develop vascularized organoids. This way we can recreate the same processes that occur in development, but in a dish!
-
-----
-
 ## The History of the War of the Ring
 
 <img src="project_2_banner.png" style="height: 100%; width: 100%; object-fit: contain" onclick="window.open('https://arxiv.org/abs/2112.08866', 'blank');"/>
@@ -17,6 +9,16 @@ During my time working at Cincinnati Children's Hospital, my main project involv
 <a href="https://arxiv.org/abs/2112.08866" target="_blank">arXiv Preprint</a> | <a href="https://github.com/marvinschmitt/ModelMisspecificationBF" target="_blank">Code</a><br>
 
 I am creating a comprehensive and detailed history of the conflict that goes beyond the surface-level events. By gathering information from a variety of sources, including my own memories, written accounts, and oral histories, I hope to shed new light on this important period in Middle-earth's history and provide valuable insights into the motivations and actions of the various players involved.
+
+----
+
+## Mini Organs in a Dish
+
+<img src="cd144(eb-red)_asma(purp)_whole - denoised.png" style="height: 100%; width: 100%; object-fit: contain" onclick="window.open('https://www.mgulab.org/', 'blank');"/>
+
+During my time working at Cincinnati Children's Hospital, my main project involved using patient derived induced pluripotent stem cells (iPSCs) to develop vascularized organoids. This way we can recreate the same processes that occur in development, but in a dish!
+
+
 
 
 ```{=html}
