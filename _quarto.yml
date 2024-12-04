@@ -2,37 +2,31 @@
 
 # website settings
 website:
-  title: "Gandalf"                                # Your name
-  description: "Gandalf is a renowned wizard and scholar of Middle-earth"   # A brief slogan (optional)
-  image: img/my_image.jpg
+  title: "Victor Manuel Pastrana-Gómez"                # Your name
+  description: "Victor is a 1st year PhD student in BME. He is also a part of the Medical Scientist Training Program"   # A brief slogan (optional)
+  image: img/J5023520_Processed_14MP_pp.jpg
   
-  favicon: img/favicon.png
+  favicon: img/school-of-medicine-case-western-reserve-university-logo-vector.png
   
   # start of the navigation bar at the top of the website
   navbar:
     pinned: true
-    logo: /img/logo.png
+    logo: /img/spartan_logo.png
     
     # your sub-pages
     left:
       - text: "Projects"
         href: projects/index.qmd
-      - text: "Photography"
-        href: photography/index.qmd
       - text: "CV"
         href: cv/index.qmd
     
     # your social media handles
     right:
-      - icon: folder-symlink
-        href: https://www.marvinschmitt.com/blog/website-tutorial-quarto/
-      - icon: twitter
-        href: https://twitter.com/MarvinSchmittML
       - icon: linkedin
-        href: https://www.linkedin.com/in/marvin-schmitt-a85b321a2/
+        href: https://www.linkedin.com/in/victor-pastrana-gomez-622657329/
       - icon: envelope
         aria-label: email
-        href: "mailto:mail.marvinschmitt@gmail.com"  
+        href: "mailto:vmp46@case.edu"  
   
   
 
