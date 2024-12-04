@@ -2,13 +2,11 @@
 title: Projects
 ---
 
-## The History of the War of the Ring
+## Using Nanobubbles as Contrast for Ultrasound Imaging
 
-<img src="project_2_banner.png" style="height: 100%; width: 100%; object-fit: contain" onclick="window.open('https://arxiv.org/abs/2112.08866', 'blank');"/>
+<img src="bmode-NLCshot.png" style="height: 100%; width: 100%; object-fit: contain" onclick="window.open('https://www.exnerlab.com/', 'blank');"/>
 
-<a href="https://arxiv.org/abs/2112.08866" target="_blank">arXiv Preprint</a> | <a href="https://github.com/marvinschmitt/ModelMisspecificationBF" target="_blank">Code</a><br>
-
-I am creating a comprehensive and detailed history of the conflict that goes beyond the surface-level events. By gathering information from a variety of sources, including my own memories, written accounts, and oral histories, I hope to shed new light on this important period in Middle-earth's history and provide valuable insights into the motivations and actions of the various players involved.
+Nanobubbles are lipid shell based nanoparticles that are able to expand and contract in response to an acoustic field. The field, in this case, comes from the ultrasound transducer. Due to their special movements, they are bright and able to be seen on ultrasound images. Their small size does not allow for individual observation, but together they act as an echogenic fluid! This way we hope to gain more insight into the structures of tumors and the potential efficacy of different chemotherapeutics.
 
 ----
 
@@ -21,8 +19,3 @@ During my time working at Cincinnati Children's Hospital, my main project involv
 
 
 
-```{=html}
-<div  style="margin: 30px; text-align: center;">
-<a class="btn btn-primary" href="https://www.marvinschmitt.com/blog/website-tutorial-quarto/" role="button" target="_blank" style="padding: 15px 30px;">View the tutorial for this template (+ download link)</a>
-</div>
-```
