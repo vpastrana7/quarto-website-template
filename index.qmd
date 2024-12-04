@@ -6,7 +6,7 @@ about:
   links:
     - icon: github
       text: Github
-      href: https://github.com/
+      href: https://github.com/vpastrana7/vpastrana7.github.io
     - icon: linkedin
       text: LinkedIn
       href: https://www.linkedin.com/in/victor-pastrana-gomez-622657329/
@@ -28,7 +28,7 @@ In addition to my research, I entertain myself with various hobbies. I enjoy coo
 
 ```{=html}
 <div  style="margin: 30px; text-align: center;">
-<a class="btn btn-primary" href="https://www.marvinschmitt.com/blog/website-tutorial-quarto/" role="button" target="_blank" style="padding: 15px 30px;">View the tutorial for this template (+ download link)</a>
+<a class="btn btn-primary" href="https://github.com/vpastrana7/vpastrana7.github.io" role="button" target="_blank" style="padding: 15px 30px;">My Github Page!</a>
 </div>
 ```
 
