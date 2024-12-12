@@ -27,6 +27,7 @@ library(janitor)
 library(naniar)
 library(patchwork)
 library(xfun)
+library(Epi)
 library(Hmisc)
 library(nhanesA)
 library(foreign)
@@ -42,39 +43,261 @@ theme_set(theme_minimal(base_size = 24, base_family = "sans"))
 #| label: load-data
 #| message: false
 
+#import all data from downloaded files
+
 demo_raw <- read.xport("P_DEMO.xpt")
 oral_health_raw <- read.xport("P_OHXDEN.xpt")
 fast_glucose <- read.xport("P_GLU.xpt")
 body_mx <- read.xport("P_BMX.xpt")
 
+#make dataframes with variables I want
+
 NEW <- left_join(demo_raw, oral_health_raw, by = "SEQN")
 NEW2 <- left_join(NEW, body_mx, by = "SEQN")
 final_raw <- left_join(NEW2, fast_glucose, by = "SEQN")
 final_1 <- final_raw %>% filter(RIDSTATR == 2, RIDAGEYR < 80, RIDAGEYR > 20) %>% select(SEQN, OHXRCAR, BMXBMI, LBXGLU)
+summary(final_1)
 ```
 
 ```{r}
-#| label: set-inputs
+#| title: Visualization of BMI for Patients with Caries
 
-time_period <- paste(params$month, params$year)
+#choose data to look at normality
+
+final_1 %>% filter(OHXRCAR == 1) %>% #saw that there was right skewing with no transformation
+  ggplot(aes(sample = BMXBMI)) +
+  geom_qq() + geom_qq_line() +
+  labs(x= "Patient BMI",
+       title = "Normality of BMI",
+       subtitle = "Patients with Root Caries")
+
+final_BMIanaly <- final_1 %>% mutate(logBMXBMI = log(BMXBMI)) %>% select(SEQN, OHXRCAR, logBMXBMI)
+
+final_BMIanaly %>% filter(OHXRCAR == 1) %>% #distribution looks much better
+  ggplot(aes(sample = logBMXBMI)) +
+  geom_qq() + geom_qq_line() +
+  labs(x= "Patient log(BMI)",
+       title = "Normality of Transformed BMI",
+       subtitle = "Patients with Root Caries")
+
+ggplot(data = final_BMIanaly, aes(x = logBMXBMI)) + #histogram also looks good!
+geom_histogram(bins = 20, fill = "coral", col = "ivory") +
+labs(title = "BMI Spread in Patients with Root Caries")
+
+
+```
+
+
+```{r}
+#| title: Visualization of Fasting Blood Glucose for Patients with Caries
+
+final_1 %>% filter(OHXRCAR == 1) %>% #saw that there was MASSIVE right skewing with no transformation
+  ggplot(aes(sample = LBXGLU)) +
+  geom_qq() + geom_qq_line() +
+  labs(x= "Patient Glucose",
+       title = "Normality of Fasting Glucose",
+       subtitle = "Patients with Root Caries")
+
+final_GLUanaly <- final_1 %>% mutate(logLBXGLU = log10(LBXGLU)) %>% select(SEQN, OHXRCAR, logLBXGLU)
+
+final_GLUanaly %>% filter(OHXRCAR == 1) %>% #distribution looks much better
+  ggplot(aes(sample = logLBXGLU)) +
+  geom_qq() + geom_qq_line() +
+  labs(x= "Patient log(GLU)",
+       title = "Normality of Transformed Glucose Levels",
+       subtitle = "Patients with Root Caries")
+
+ggplot(data = final_GLUanaly, aes(x = logLBXGLU)) + #histogram also looks good!
+geom_histogram(bins = 20, fill = "coral", col = "ivory") +
+labs(title = "Fasting Glucose Spread in Patients with Root Caries")
+
+final_GLUanaly %>% filter(OHXRCAR == 1) %>%
+  ggplot(data = ., aes(x = logLBXGLU, y = OHXRCAR)) +
+geom_violin(aes(fill = logLBXGLU)) +
+geom_boxplot(width = 0.3, outlier.size = 4) + coord_flip() +
+guides(fill = "none") +
+labs(x = "Group")
+
+outliers_glu <- boxplot(final_GLUanaly$logLBXGLU, plot=FALSE)$out # remove outliers from glucose data
+x_glu <- final_GLUanaly
+x_glu_out <- x_glu[-which(x_glu$logLBXGLU %in% outliers_glu),]
+
+x_glu_out %>% filter(OHXRCAR == 1) %>% # much better after removing outliers
+  ggplot(data = ., aes(x = logLBXGLU, y = OHXRCAR)) +
+geom_violin(aes(fill = logLBXGLU)) +
+geom_boxplot(width = 0.3, outlier.size = 4) + coord_flip()
+
+
+
+```
+
+
+
+
+```{r}
+#| title: Linear Regression for Patients with caries (BMI v Fasting Glucose)
+#| fig-height: 7
+final_GLU_BMI <- left_join(x_glu_out, final_BMIanaly, by = "SEQN")
+final_GLU_BMI_caries <- final_GLU_BMI %>% filter(OHXRCAR.x == 1)
+
+carie_lm_BMI_GLU <- lm(logBMXBMI ~ logLBXGLU, data = final_GLU_BMI_caries)
+
+carie_lm_BMI_GLU_perf <- model_performance(carie_lm_BMI_GLU)
+print(carie_lm_BMI_GLU_perf)
+
+check_model(carie_lm_BMI_GLU)
+
+# even after the transformations and the removal of outliers this linear model is still very poor
+# however, I am still pleased with the transformations I achieved in order to produce a normally
+# distributed data set
+```
+
+
+```{r}
+#| title: Visualization of BMI for Patients with No Caries
+
+#choose data to look at normality
+
+final_1 %>% filter(OHXRCAR == 2) %>% #saw that there was right skewing with no transformation
+  ggplot(aes(sample = BMXBMI)) +
+  geom_qq() + geom_qq_line() +
+  labs(x= "Patient BMI",
+       title = "Normality of BMI",
+       subtitle = "Patients with No Root Caries")
+
+final_BMIanaly <- final_1 %>% mutate(logBMXBMI = log(BMXBMI)) %>% select(SEQN, OHXRCAR, logBMXBMI)
+final_BMIanaly_nocarie <- final_BMIanaly <- final_1 %>% filter(OHXRCAR == 2) %>% mutate(logBMXBMI = log(BMXBMI)) %>% select(SEQN, OHXRCAR, logBMXBMI)
+
+final_BMIanaly %>% filter(OHXRCAR == 2) %>% #distribution looks much better
+  ggplot(aes(sample = logBMXBMI)) +
+  geom_qq() + geom_qq_line() +
+  labs(x= "Patient log(BMI)",
+       title = "Normality of Transformed BMI",
+       subtitle = "Patients with No Root Caries")
+
+ggplot(data = final_BMIanaly_nocarie, aes(x = logBMXBMI)) + #histogram also looks good!
+geom_histogram(bins = 20, fill = "coral", col = "ivory") +
+labs(title = "BMI Spread in Patients with No Root Caries")
+
 ```
 
 ```{r}
-#| label: prep-data
+#| title: Visualization of Fasting Blood Glucose for Patients with No Caries
 
-ld <- ld |>
-  mutate(
-    delivery_method = str_to_sentence(delivery_method),
-    term = str_to_sentence(term),
-    parity = case_when(
-      parity == "1"  ~ "Nulliparous",
-      parity == "2"  ~ "Primiparous",
-      parity == "3+" ~ "Multiparous"
-    ),
-    parity = fct_relevel(parity, "Nulliparous", "Primiparous", "Multiparous"),
-    maternal_age = fct_relevel(maternal_age, "<20", "20-34", "35+")
-  )
+final_1 %>% filter(OHXRCAR == 2) %>% #saw that there was MASSIVE right skewing with no transformation
+  ggplot(aes(sample = LBXGLU)) +
+  geom_qq() + geom_qq_line() +
+  labs(x= "Patient Glucose",
+       title = "Normality of Fasting Glucose",
+       subtitle = "Patients with Root Caries")
+
+final_GLUanaly <- final_1 %>% mutate(logLBXGLU = log10(LBXGLU)) %>% select(SEQN, OHXRCAR, logLBXGLU)
+
+final_GLUanaly %>% filter(OHXRCAR == 2) %>% #distribution looks a little better (values are closer)
+  ggplot(aes(sample = logLBXGLU)) +
+  geom_qq() + geom_qq_line() +
+  labs(x= "Patient log(GLU)",
+       title = "Normality of Transformed Glucose Levels",
+       subtitle = "Patients with Root Caries")
+
+final_GLUanaly_nocaries <- final_GLUanaly %>% filter(OHXRCAR == 2)
+
+ggplot(data = final_GLUanaly_nocaries, aes(x = logLBXGLU)) + #histogram looks a little better!
+geom_histogram(bins = 20, fill = "coral", col = "ivory") +
+labs(title = "Fasting Glucose Spread in Patients with Root Caries")
+
+final_GLUanaly_nocaries %>% filter(OHXRCAR == 2) %>% #a ton of outliers seen
+  ggplot(data = ., aes(x = logLBXGLU, y = OHXRCAR)) +
+geom_violin(aes(fill = logLBXGLU)) +
+geom_boxplot(width = 0.3, outlier.size = 4) + coord_flip() +
+guides(fill = "none") +
+labs(x = "Group")
+
+outliers_glu <- boxplot(final_GLUanaly_nocaries$logLBXGLU, plot=FALSE)$out # remove outliers from glucose data
+x_glu_nocaries <- final_GLUanaly_nocaries
+x_glu_out_nocaries <- x_glu[-which(x_glu$logLBXGLU %in% outliers_glu),]
+
+x_glu_out %>% filter(OHXRCAR == 2) %>% # much better after removing many outliers
+  ggplot(data = ., aes(x = logLBXGLU, y = OHXRCAR)) +
+geom_violin(aes(fill = logLBXGLU)) +
+geom_boxplot(width = 0.3, outlier.size = 4) + coord_flip()
 ```
+
+```{r}
+#| title: Linear Regression for Patients with No Caries (BMI v Fasting Glucose)
+#| fig-height: 9
+final_GLU_BMI <- left_join(x_glu_out_nocaries, final_BMIanaly_nocarie, by = "SEQN")
+final_GLU_BMI_nocaries <- final_GLU_BMI %>% filter(OHXRCAR.x == 2)
+
+No_carie_lm_BMI_GLU <- lm(logBMXBMI ~ logLBXGLU, data = final_GLU_BMI_nocaries)
+
+nocarie_lm_BMI_GLU_perf <- model_performance(No_carie_lm_BMI_GLU)
+print(nocarie_lm_BMI_GLU_perf)
+
+check_model(No_carie_lm_BMI_GLU)
+
+# even after the transformations and the removal of outliers this linear model is still very poor
+# however, I am still pleased with the transformations I achieved in order to produce a normally
+# distributed data set
+
+# The values may just be too small to properly make a model for these datasets after the log transformation
+```
+
+
+```{r}
+#| title: Splitting Fasting Glucose Levels Dependent on BMI, not caries
+#| fig-height: 9
+
+final_1 %>% filter(complete.cases(BMXBMI)) %>%
+  summarise(q40 = quantile(BMXBMI, c(0.4)),
+            q60 = quantile(BMXBMI, c(0.6)))
+
+BMI_grplow <- final_1 %>% filter(BMXBMI <= 27.4)
+BMI_grphigh <- final_1 %>% filter(BMXBMI >= 30.7)
+
+BMI_low_lm <- lm(LBXGLU ~ BMXBMI, data = BMI_grplow)
+BMI_low_lm
+BMI_high_lm <- lm(LBXGLU ~ BMXBMI, data = BMI_grphigh)
+BMI_high_lm
+
+
+ttest_low <- Hmisc::smean.cl.normal(BMI_grplow$LBXGLU, conf.int = 0.95)
+ttest_low
+ttest_high <- Hmisc::smean.cl.normal(BMI_grphigh$LBXGLU, conf.int = 0.95)
+ttest_high #these t tests show that there is a potential relation between the lower 40% of BMI values            are only prediabetic at most while the top 40% of BMI values still suggests prediabetes, but much closer to the cutoff for diabetes (126 mg/dL) -> could suggest these patients need closer monitoring
+
+
+set.seed(77)
+bootstrap_low <- Hmisc::smean.cl.boot(BMI_grplow$LBXGLU, conf.int = 0.95)
+bootstrap_low
+bootstrap_high <- Hmisc::smean.cl.boot(BMI_grphigh$LBXGLU, conf.int = 0.95)
+bootstrap_high
+
+
+BMI_low_lm_perf <- model_performance(BMI_low_lm)
+print(BMI_low_lm_perf)
+BMI_high_lm_perf <- model_performance(BMI_high_lm)
+print(BMI_high_lm_perf)
+```
+
+
+```{r}
+check_model(BMI_low_lm)
+check_model(BMI_high_lm)
+```
+
+```{r}
+
+final_1 %>% count(LBXGLU > 125 , BMXBMI > 30) # patients with caries and obese
+final_1 %>% count(LBXGLU < 125 , BMXBMI > 30) # patients with no caries and obese
+final_1 %>% count(LBXGLU > 125 , BMXBMI < 24.9) # patients with no caries and normal BMI
+final_1 %>% count(LBXGLU < 125, BMXBMI < 24.9) # patients with caries and normal BMI
+
+diabetesvobesity <- matrix(c(336, 225, 1180, 1865), nrow = 2, byrow = TRUE)
+dimnames(diabetesvobesity) <- list(c("Diabetes", "No Diabetes"), c("Obesity", "No Obesity"))
+twoby2(diabetesvobesity)
+```
+
 
 #  {.sidebar}
 
@@ -84,11 +307,11 @@ This dashboard displays statistics for:
 |--------------|---------------------|
 | **Hospital** | Grey Sloan Memorial |
 | **Unit**     | Labor and Delivery  |
-| **Month**    | `{r} time_period`   |
+| **Month**    | X   |
 
 ------------------------------------------------------------------------
 
-In `{r} time_period` the staff breakdown in the unit was as follows:
+In X the staff breakdown in the unit was as follows:
 
 |                          |     |
 |--------------------------|-----|
@@ -110,66 +333,20 @@ This is a fictional hospital. The data are simulated based on realistic birth ch
 #| label: all-values
 #| results: hide
 
-n_births <- nrow(ld)
-
-p_cesarean <- ld |>
-  count(delivery_method) |>
-  mutate(p = n / sum(n)) |>
-  filter(delivery_method == "Cesarean") |>
-  pull(p)
-
-p_cesarean_color <- case_when(
-  between(p_cesarean, params$us_cesarean_rate, params$us_cesarean_rate + params$threshold_diff) ~ "warning",
-  p_cesarean > params$us_cesarean_rate + params$threshold_diff ~ "danger",
-  .default = "light"
-  )
-
-p_preterm <- ld |>
-  count(term) |>
-  mutate(p = n / sum(n)) |>
-  filter(term == "Pre-term") |>
-  pull(p)
-
-p_preterm_color <- case_when(
-  between(p_preterm, params$us_preterm_rate, params$us_preterm_rate + params$threshold_diff) ~ "warning",
-  p_preterm > params$us_preterm_rate + params$threshold_diff ~ "danger",
-  .default = "light"
-  )
+#X
 ```
 
 ## Row {height="20%"}
 
 ```{r}
-#| content: valuebox
-#| title: "Total births"
 
-list(
-  icon = "file-medical",
-  color = "primary",
-  value = n_births
-)
-```
-
-```{r}
-#| content: valuebox
-#| title: "Cesarean deliveries"
-
-list(
-  icon = "clipboard2-pulse",
-  color = p_cesarean_color,
-  value = label_percent(accuracy = 0.1)(p_cesarean)
-)
 ```
 
 ```{r}
 #| content: valuebox
 #| title: "Pre-term births"
 
-list(
-  icon = "calendar-week",
-  color = p_preterm_color,
-  value = label_percent(accuracy = 0.1)(p_preterm)
-)
+#XX
 ```
 
 ## Row {height="40%"}
@@ -179,34 +356,6 @@ list(
 ```{r}
 #| title: Delivery method
 
-ld |>
-  count(delivery_method) |>
-  mutate(p = n / sum(n)) |>
-  gt() |>
-  fmt_percent(
-    columns = p,
-    decimals = 1
-  ) |>
-  tab_style(
-    style = cell_text(color = "#ae8b2d", weight = "bold"),
-    locations = cells_body(
-      columns = everything(),
-      rows = delivery_method == "Cesarean"
-    )
-  ) |>
-  tab_style(
-    style = cell_text(color = "#0e2635", weight = "bold"),
-    locations = cells_body(
-      columns = everything(),
-      rows = delivery_method == "Vaginal"
-    )
-  ) |>
-  cols_label(
-    delivery_method = "",
-    n = "Number of<br>deliveries",
-    p = "Proportion of<br>deliveries",
-    .fn = md
-  )
 ```
 
 ### Column {width="60%"}
@@ -214,18 +363,6 @@ ld |>
 ```{r}
 #| title: Maternal age
 
-ld |>
-  count(maternal_age) |>
-  mutate(p = n / sum(n)) |>
-  ggplot(aes(x = maternal_age, y = n, group = 1)) +
-  geom_line(linewidth = 2, color = "#0e263560") +
-  geom_point(size = 3, color = "#0e2635") +
-  geom_point(size = 6, color = "#0e2635", shape = "circle open") +
-  labs(x = NULL) +
-  scale_y_continuous(
-    "Count",
-    sec.axis = sec_axis(~ . / n_births, name = "Proportion", labels = label_percent())
-  )
 ```
 
 ## Row {height="40%"}
@@ -233,31 +370,11 @@ ld |>
 ```{r}
 #| title: Delivery method and parity
 
-ld |>
-  count(parity, delivery_method) |>
-  ggplot(aes(x = n, y = fct_rev(parity), fill = delivery_method)) +
-  geom_col(position = "fill", color = "white") +
-  scale_fill_manual(
-    values = c("#ae8b2d", "#0e2635"),
-    guide = guide_legend(reverse = TRUE)
-  ) +
-  scale_x_continuous(labels = label_percent()) +
-  labs(y = NULL, x = NULL, fill = "Delivery\nmethod")
 ```
 
 ```{r}
 #| title: Delivery method and maternal age
 
-ld |>
-  count(maternal_age, delivery_method) |>
-  ggplot(aes(x = n, y = fct_rev(maternal_age), fill = delivery_method)) +
-  geom_col(position = "fill", color = "white") +
-  scale_fill_manual(
-    values = c("#ae8b2d", "#0e2635"),
-    guide = guide_legend(reverse = TRUE)
-  ) +
-  scale_x_continuous(labels = label_percent()) +
-  labs(y = NULL, x = NULL, fill = "Delivery\nmethod")
 ```
 
 # Vaginal {orientation="columns"}
@@ -268,22 +385,6 @@ ld |>
 #| label: vaginal-values
 #| results: hide
 
-ld_v <- ld |>
-  filter(delivery_method == "Vaginal")
-
-n_births_v <- nrow(ld_v)
-
-p_preterm_v <- ld_v |>
-  count(term) |>
-  mutate(p = n / sum(n)) |>
-  filter(term == "Pre-term") |>
-  pull(p)
-
-p_preterm_color_v <- case_when(
-  between(p_preterm_v, params$us_preterm_rate, params$us_preterm_rate + params$threshold_diff) ~ "warning",
-  p_preterm_v > params$us_preterm_rate + params$threshold_diff ~ "danger",
-  .default = "light"
-  )
 ```
 
 ### Row {height="20%"}
@@ -292,22 +393,12 @@ p_preterm_color_v <- case_when(
 #| component: valuebox
 #| title: "Total births"
 
-list(
-  icon = "file-medical",
-  color = "primary",
-  value = n_births_v
-)
 ```
 
 ```{r}
 #| component: valuebox
 #| title: "Pre-term births"
 
-list(
-  icon = "calendar-week",
-  color = p_preterm_color_v,
-  value = label_percent(accuracy = 0.1)(p_preterm_v)
-)
 ```
 
 ### Row {height="40%"}
@@ -315,18 +406,6 @@ list(
 ```{r}
 #| title: Maternal age
 
-ld_v |>
-  count(maternal_age) |>
-  mutate(p = n / sum(n)) |>
-  ggplot(aes(x = maternal_age, y = n, group = 1)) +
-  geom_line(linewidth = 2, color = "#0e263560") +
-  geom_point(size = 3, color = "#0e2635") +
-  geom_point(size = 6, color = "#0e2635", shape = "circle open") +
-  labs(x = NULL) +
-  scale_y_continuous(
-    "Count",
-    sec.axis = sec_axis(~ . / n_births, name = "Proportion", labels = label_percent())
-  )
 ```
 
 ### Row {height="40%" .tabset}
@@ -334,33 +413,14 @@ ld_v |>
 ```{r}
 #| title: Maternal age and parity
 
-ld_v |>
-  count(maternal_age, parity) |>
-  ggplot(aes(x = n, y = fct_rev(maternal_age), fill = fct_rev(parity))) +
-  geom_col(position = "fill", color = "white") +
-  scale_fill_brewer(
-    palette = "Blues",
-    guide = guide_legend(reverse = TRUE),
-    direction = -1
-  ) +
-  scale_x_continuous(labels = label_percent()) +
-  labs(y = NULL, x = NULL, fill = "Parity")
+
 ```
 
 ```{r}
 #| title: Maternal age and term
 
-ld_v |>
-  count(maternal_age, term) |>
-  ggplot(aes(x = n, y = fct_rev(maternal_age), fill = fct_rev(term))) +
-  geom_col(position = "fill", color = "white") +
-  scale_fill_brewer(
-    palette = "Greens",
-    guide = guide_legend(reverse = TRUE),
-    direction = -1
-  ) +
-  scale_x_continuous(labels = label_percent()) +
-  labs(y = NULL, x = NULL, fill = "Term")
+#ld_v |>
+
 ```
 
 ## Column {width="40%"}
@@ -368,19 +428,8 @@ ld_v |>
 ```{r}
 #| title: Data
 
-ld_v |>
-  select(-delivery_method) |>
-  arrange(patient_id) |>
-  datatable(
-    colnames = c("ID", "Maternal age", "Parity", "Term"),
-    options = list(
-      dom = "lrtip", 
-      paging = TRUE,
-      lengthMenu = c(5, 10, 25),
-      pageLength = 10, 
-      scrollY = TRUE
-    ),
-  )
+#ld_v |>
+
 ```
 
 # Caesarean {orientation="columns"}
@@ -391,22 +440,7 @@ ld_v |>
 #| label: cesarean-values
 #| results: hide
 
-ld_c <- ld |>
-  filter(delivery_method == "Cesarean")
 
-n_births_c <- nrow(ld_c)
-
-p_preterm_c <- ld_c |>
-  count(term) |>
-  mutate(p = n / sum(n)) |>
-  filter(term == "Pre-term") |>
-  pull(p)
-
-p_preterm_color_c <- case_when(
-  between(p_preterm_c, params$us_preterm_rate, params$us_preterm_rate + params$threshold_diff) ~ "warning",
-  p_preterm_c > params$us_preterm_rate + params$threshold_diff ~ "danger",
-  .default = "light"
-  )
 ```
 
 ### Row {height="20%"}
@@ -415,22 +449,13 @@ p_preterm_color_c <- case_when(
 #| component: valuebox
 #| title: "Total births"
 
-list(
-  icon = "file-medical",
-  color = "primary",
-  value = n_births_c
-)
+#f
 ```
 
 ```{r}
 #| component: valuebox
 #| title: "Pre-term births"
 
-list(
-  icon = "calendar-week",
-  color = p_preterm_color_c,
-  value = label_percent(accuracy = 0.1)(p_preterm_c)
-)
 ```
 
 ### Row {height="40%"}
@@ -438,18 +463,6 @@ list(
 ```{r}
 #| title: Maternal age
 
-ld_c |>
-  count(maternal_age) |>
-  mutate(p = n / sum(n)) |>
-  ggplot(aes(x = maternal_age, y = n, group = 1)) +
-  geom_line(linewidth = 2, color = "#0e263560") +
-  geom_point(size = 3, color = "#0e2635") +
-  geom_point(size = 6, color = "#0e2635", shape = "circle open") +
-  labs(x = NULL) +
-  scale_y_continuous(
-    "Count",
-    sec.axis = sec_axis(~ . / n_births, name = "Proportion", labels = label_percent())
-  )
 ```
 
 ### Row {height="40%" .tabset}
@@ -457,33 +470,12 @@ ld_c |>
 ```{r}
 #| title: Maternal age and parity
 
-ld_c |>
-  count(maternal_age, parity) |>
-  ggplot(aes(x = n, y = fct_rev(maternal_age), fill = fct_rev(parity))) +
-  geom_col(position = "fill", color = "white") +
-  scale_fill_brewer(
-    palette = "Blues",
-    guide = guide_legend(reverse = TRUE),
-    direction = -1
-  ) +
-  scale_x_continuous(labels = label_percent()) +
-  labs(y = NULL, x = NULL, fill = "Parity")
 ```
 
 ```{r}
 #| title: Maternal age and term
 
-ld_c |>
-  count(maternal_age, term) |>
-  ggplot(aes(x = n, y = fct_rev(maternal_age), fill = fct_rev(term))) +
-  geom_col(position = "fill", color = "white") +
-  scale_fill_brewer(
-    palette = "Greens",
-    guide = guide_legend(reverse = TRUE),
-    direction = -1
-  ) +
-  scale_x_continuous(labels = label_percent()) +
-  labs(y = NULL, x = NULL, fill = "Term")
+
 ```
 
 ## Column {width="40%"}
@@ -491,28 +483,16 @@ ld_c |>
 ```{r}
 #| title: Data
 
-ld_c |>
-  select(-delivery_method) |>
-  arrange(patient_id) |>
-  datatable(
-    colnames = c("ID", "Maternal age", "Parity", "Term"),
-    options = list(
-      dom = "lrtip", 
-      paging = TRUE,
-      lengthMenu = c(5, 10, 25),
-      pageLength = 10, 
-      scrollY = TRUE
-    ),
-  )
+
 ```
 
 # Data
 
 ```{r}
-ld |>
-  arrange(patient_id) |>
-  datatable(
-    colnames = c("ID", "Maternal age", "Delivery method", "Parity", "Term"),
-    options = list(dom = 'ftp', paging = TRUE)
-    )
+#ld |>
+ # arrange(patient_id) |>
+  #datatable(
+  #  colnames = c("ID", "Maternal age", "Delivery method", "Parity", "Term"),
+   # options = list(dom = 'ftp', paging = TRUE)
+  #  )
 ```
