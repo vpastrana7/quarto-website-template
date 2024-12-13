@@ -9,9 +9,51 @@
   {
     "objectID": "Blog/index.html",
     "href": "Blog/index.html",
-    "title": "Blog",
+    "title": "Blog/Report",
     "section": "",
-    "text": "The Process\nFirst what I wanted to do was to look at what kind of data"
+    "text": "First what I wanted to do was to look at what kind of data was found in the NHANES database. There were so many variables to choose from, but the ones I ended up choosing were poor dentition, fasting glucose levels, and BMI (codebook at the end of the blog). Poor dentition was already a categorical variable which made some of my analysis more straightforward. According to suggestions when working with the data, I focused on patients that had a RISTATR value of 2 and that the age of the patients were less than 80, but still adults.\n\n\n\nThe first analysis I wanted to do was to look at the normality of the BMI data. However, I wanted to see if there were differences in the spread and normality of the data if I used the poor dentition variable (root caries or no root caries) to separate the data. Overall, it was somewhat right skewed. Therefore, for both BMI sets I chose to use a log transformation. The resulting QQ plots show a much better normality and the histograms also showed the same.\n\n\n\nFrom there, I wanted to do the same with fasting blood glucose levels and poor dentition. Again I separated the fasting blood glucose data into patients with root caries and without root caries. Unfortunately this data was severely right skewed. Again, I used the log transform, but it did not fix the skewing as much as it previously did. It worked in getting the y distribution of the data down, but the histogram and the first box/violin plot I show reflect the many outliers present in the data. The second box/violin plot I show is after I removed the outliers from the data, which very much took off many of the outliers originally present.\n\n\n\nAfter I mitigated the skewing as much as I could, I tried to perform a linear regression on the data from Part 3 to see if fasting glucose levels could predict BMI. I did this for both patients with and without root caries. On the dashboard I included the model performance and they perform miserably. All of the metrics to see the performance of the model (AIC, BIC, r-squared/adjusted r-squared) were indicative that this was not a good model.\n\n\n\nWith the disappointment of the previous model, I wanted to see if fasting blood glucose could be predicted by BMI. However, I wanted to split up the BMI data into the bottom 40% of values and the top 40% of values and then perform a linear regression on this data. This way, it would be easier to see if the top and bottom portions of the data make better sense with the fasting glucose data. At the top of the “Fasting Glucose + BMI” page, I show the values to split up the BMI data. Then, I show the model performances again and they are also quite terrible. Finally, I tried one last bootstrap test to see if that would show some differences.\nFinally, the bootstrapping does suggest that the intervals pertaining to each category (BMI high/low) show that the BMI low group has a much more “normal” fasting glucose (still in the range of prediabetes) and the BMI high group is much closer to the diabetes range.\n\n\n\nFor the last analysis I wanted to do, I wanted to look at diabetes and BMI/obesity. They did not provide diabetes data, however, a fasting blood glucose level over 125 mg/dL. Similarly, I categorized BMI data as obesity by obtaining the values of BMI greater than 30. I then counted the overlapping values, (obesity and diabetes, no obesity and diabetes, etc). I then made a 2x2 table to look at the relative risk when it comes to having obesity and diabetes. The relative risk is around 1.5 with a 95% confidence interval of 1.4 -&gt; 1.7 . This indicates that diabetic patients are more likely to have obesity as well. The confidence interval does not include 1, which makes this statistically significant.\n\n\n\n\n\n\n\n\n\n\nVariable\nRole\nDescription\nYear(s)\n\n\n\n\n\nOHXRCAR\nID\nPoor Dentition status. 1 = Root Caries, 2 = No Root Caries\n2017-2020\n\n\n\nBMXBMI\nID\nBMI status of the patient\n2017-2020\n\n\n\nLBXGLU\nID\nFasting Glucose levels\n2017-2020"
+  },
+  {
+    "objectID": "Blog/index.html#part-1",
+    "href": "Blog/index.html#part-1",
+    "title": "Blog/Report",
+    "section": "",
+    "text": "First what I wanted to do was to look at what kind of data was found in the NHANES database. There were so many variables to choose from, but the ones I ended up choosing were poor dentition, fasting glucose levels, and BMI (codebook at the end of the blog). Poor dentition was already a categorical variable which made some of my analysis more straightforward. According to suggestions when working with the data, I focused on patients that had a RISTATR value of 2 and that the age of the patients were less than 80, but still adults."
+  },
+  {
+    "objectID": "Blog/index.html#part-2",
+    "href": "Blog/index.html#part-2",
+    "title": "Blog/Report",
+    "section": "",
+    "text": "The first analysis I wanted to do was to look at the normality of the BMI data. However, I wanted to see if there were differences in the spread and normality of the data if I used the poor dentition variable (root caries or no root caries) to separate the data. Overall, it was somewhat right skewed. Therefore, for both BMI sets I chose to use a log transformation. The resulting QQ plots show a much better normality and the histograms also showed the same."
+  },
+  {
+    "objectID": "Blog/index.html#part-3",
+    "href": "Blog/index.html#part-3",
+    "title": "Blog/Report",
+    "section": "",
+    "text": "From there, I wanted to do the same with fasting blood glucose levels and poor dentition. Again I separated the fasting blood glucose data into patients with root caries and without root caries. Unfortunately this data was severely right skewed. Again, I used the log transform, but it did not fix the skewing as much as it previously did. It worked in getting the y distribution of the data down, but the histogram and the first box/violin plot I show reflect the many outliers present in the data. The second box/violin plot I show is after I removed the outliers from the data, which very much took off many of the outliers originally present."
+  },
+  {
+    "objectID": "Blog/index.html#part-4",
+    "href": "Blog/index.html#part-4",
+    "title": "Blog/Report",
+    "section": "",
+    "text": "After I mitigated the skewing as much as I could, I tried to perform a linear regression on the data from Part 3 to see if fasting glucose levels could predict BMI. I did this for both patients with and without root caries. On the dashboard I included the model performance and they perform miserably. All of the metrics to see the performance of the model (AIC, BIC, r-squared/adjusted r-squared) were indicative that this was not a good model."
+  },
+  {
+    "objectID": "Blog/index.html#part-5",
+    "href": "Blog/index.html#part-5",
+    "title": "Blog/Report",
+    "section": "",
+    "text": "With the disappointment of the previous model, I wanted to see if fasting blood glucose could be predicted by BMI. However, I wanted to split up the BMI data into the bottom 40% of values and the top 40% of values and then perform a linear regression on this data. This way, it would be easier to see if the top and bottom portions of the data make better sense with the fasting glucose data. At the top of the “Fasting Glucose + BMI” page, I show the values to split up the BMI data. Then, I show the model performances again and they are also quite terrible. Finally, I tried one last bootstrap test to see if that would show some differences.\nFinally, the bootstrapping does suggest that the intervals pertaining to each category (BMI high/low) show that the BMI low group has a much more “normal” fasting glucose (still in the range of prediabetes) and the BMI high group is much closer to the diabetes range."
+  },
+  {
+    "objectID": "Blog/index.html#part-6",
+    "href": "Blog/index.html#part-6",
+    "title": "Blog/Report",
+    "section": "",
+    "text": "For the last analysis I wanted to do, I wanted to look at diabetes and BMI/obesity. They did not provide diabetes data, however, a fasting blood glucose level over 125 mg/dL. Similarly, I categorized BMI data as obesity by obtaining the values of BMI greater than 30. I then counted the overlapping values, (obesity and diabetes, no obesity and diabetes, etc). I then made a 2x2 table to look at the relative risk when it comes to having obesity and diabetes. The relative risk is around 1.5 with a 95% confidence interval of 1.4 -&gt; 1.7 . This indicates that diabetic patients are more likely to have obesity as well. The confidence interval does not include 1, which makes this statistically significant.\n\n\n\n\n\n\n\n\n\n\nVariable\nRole\nDescription\nYear(s)\n\n\n\n\n\nOHXRCAR\nID\nPoor Dentition status. 1 = Root Caries, 2 = No Root Caries\n2017-2020\n\n\n\nBMXBMI\nID\nBMI status of the patient\n2017-2020\n\n\n\nLBXGLU\nID\nFasting Glucose levels\n2017-2020"
   },
   {
     "objectID": "photography/index.html",

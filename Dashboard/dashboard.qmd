@@ -256,7 +256,7 @@ print(nocarie_lm_BMI_GLU_perf)
 # Fasting Glucose + BMI
 
 ```{r}
-#| title: Splitting Fasting Glucose Levels Dependent on BMI, not caries
+#| title: Splitting Fasting Glucose Levels Dependent on BMI, not caries. Split into a Low and High BMI group to try and predict fasting glucose levels. 
 #| fig-height: 9
 
 final_1 %>% filter(complete.cases(BMXBMI)) %>%
