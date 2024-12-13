@@ -38,6 +38,7 @@ theme_set(theme_minimal(base_size = 24, base_family = "sans"))
 ```{r}
 #| label: load-data
 #| message: false
+#| results: hide
 
 #import all data from downloaded files
 
@@ -55,7 +56,12 @@ final_1 <- final_raw %>% filter(RIDSTATR == 2, RIDAGEYR < 80, RIDAGEYR > 20) %>%
 summary(final_1)
 ```
 
+# BMI + Caries
+
+## Column {width="50%"}
+
 ```{r}
+#| label: BMI + Caries
 #| title: Visualization of BMI for Patients with Caries
 
 #choose data to look at normality
@@ -83,6 +89,40 @@ labs(title = "BMI Spread in Patients with Root Caries")
 
 ```
 
+
+```{r}
+#| title: Visualization of BMI for Patients with No Caries
+
+#choose data to look at normality
+
+final_1 %>% filter(OHXRCAR == 2) %>% #saw that there was right skewing with no transformation
+  ggplot(aes(sample = BMXBMI)) +
+  geom_qq() + geom_qq_line() +
+  labs(x= "Patient BMI",
+       title = "Normality of BMI",
+       subtitle = "Patients with No Root Caries")
+
+final_BMIanaly <- final_1 %>% mutate(logBMXBMI = log(BMXBMI)) %>% select(SEQN, OHXRCAR, logBMXBMI)
+final_BMIanaly_nocarie <- final_BMIanaly <- final_1 %>% filter(OHXRCAR == 2) %>% mutate(logBMXBMI = log(BMXBMI)) %>% select(SEQN, OHXRCAR, logBMXBMI)
+
+final_BMIanaly %>% filter(OHXRCAR == 2) %>% #distribution looks much better
+  ggplot(aes(sample = logBMXBMI)) +
+  geom_qq() + geom_qq_line() +
+  labs(x= "Patient log(BMI)",
+       title = "Normality of Transformed BMI",
+       subtitle = "Patients with No Root Caries")
+
+ggplot(data = final_BMIanaly_nocarie, aes(x = logBMXBMI)) + #histogram also looks good!
+geom_histogram(bins = 20, fill = "coral", col = "ivory") +
+labs(title = "BMI Spread in Patients with No Root Caries")
+
+```
+
+
+
+# Caries + Fasting Glucose
+
+## Column {width="60%"}
 
 ```{r}
 #| title: Visualization of Fasting Blood Glucose for Patients with Caries
@@ -128,55 +168,6 @@ geom_boxplot(width = 0.3, outlier.size = 4) + coord_flip()
 ```
 
 
-
-
-```{r}
-#| title: Linear Regression for Patients with caries (BMI v Fasting Glucose)
-#| fig-height: 7
-final_GLU_BMI <- left_join(x_glu_out, final_BMIanaly, by = "SEQN")
-final_GLU_BMI_caries <- final_GLU_BMI %>% filter(OHXRCAR.x == 1)
-
-carie_lm_BMI_GLU <- lm(logBMXBMI ~ logLBXGLU, data = final_GLU_BMI_caries)
-
-carie_lm_BMI_GLU_perf <- model_performance(carie_lm_BMI_GLU)
-print(carie_lm_BMI_GLU_perf)
-
-check_model(carie_lm_BMI_GLU)
-
-# even after the transformations and the removal of outliers this linear model is still very poor
-# however, I am still pleased with the transformations I achieved in order to produce a normally
-# distributed data set
-```
-
-
-```{r}
-#| title: Visualization of BMI for Patients with No Caries
-
-#choose data to look at normality
-
-final_1 %>% filter(OHXRCAR == 2) %>% #saw that there was right skewing with no transformation
-  ggplot(aes(sample = BMXBMI)) +
-  geom_qq() + geom_qq_line() +
-  labs(x= "Patient BMI",
-       title = "Normality of BMI",
-       subtitle = "Patients with No Root Caries")
-
-final_BMIanaly <- final_1 %>% mutate(logBMXBMI = log(BMXBMI)) %>% select(SEQN, OHXRCAR, logBMXBMI)
-final_BMIanaly_nocarie <- final_BMIanaly <- final_1 %>% filter(OHXRCAR == 2) %>% mutate(logBMXBMI = log(BMXBMI)) %>% select(SEQN, OHXRCAR, logBMXBMI)
-
-final_BMIanaly %>% filter(OHXRCAR == 2) %>% #distribution looks much better
-  ggplot(aes(sample = logBMXBMI)) +
-  geom_qq() + geom_qq_line() +
-  labs(x= "Patient log(BMI)",
-       title = "Normality of Transformed BMI",
-       subtitle = "Patients with No Root Caries")
-
-ggplot(data = final_BMIanaly_nocarie, aes(x = logBMXBMI)) + #histogram also looks good!
-geom_histogram(bins = 20, fill = "coral", col = "ivory") +
-labs(title = "BMI Spread in Patients with No Root Caries")
-
-```
-
 ```{r}
 #| title: Visualization of Fasting Blood Glucose for Patients with No Caries
 
@@ -219,6 +210,28 @@ geom_violin(aes(fill = logLBXGLU)) +
 geom_boxplot(width = 0.3, outlier.size = 4) + coord_flip()
 ```
 
+# Caries BMI + Fasting Glucose
+
+### Row {height="40%"}
+```{r}
+#| title: Linear Regression for Patients with caries (BMI v Fasting Glucose)
+#| fig-height: 7
+final_GLU_BMI <- left_join(x_glu_out, final_BMIanaly, by = "SEQN")
+final_GLU_BMI_caries <- final_GLU_BMI %>% filter(OHXRCAR.x == 1)
+
+carie_lm_BMI_GLU <- lm(logBMXBMI ~ logLBXGLU, data = final_GLU_BMI)
+
+carie_lm_BMI_GLU_perf <- model_performance(carie_lm_BMI_GLU)
+print(carie_lm_BMI_GLU_perf)
+
+check_model(carie_lm_BMI_GLU)
+
+# even after the transformations and the removal of outliers this linear model is still very poor
+# however, I am still pleased with the transformations I achieved in order to produce a normally
+# distributed data set
+```
+
+### Row {height="40%"}
 ```{r}
 #| title: Linear Regression for Patients with No Caries (BMI v Fasting Glucose)
 #| fig-height: 9
@@ -240,6 +253,8 @@ check_model(No_carie_lm_BMI_GLU)
 ```
 
 
+# Fasting Glucose + BMI
+
 ```{r}
 #| title: Splitting Fasting Glucose Levels Dependent on BMI, not caries
 #| fig-height: 9
@@ -252,9 +267,7 @@ BMI_grplow <- final_1 %>% filter(BMXBMI <= 27.4)
 BMI_grphigh <- final_1 %>% filter(BMXBMI >= 30.7)
 
 BMI_low_lm <- lm(LBXGLU ~ BMXBMI, data = BMI_grplow)
-BMI_low_lm
 BMI_high_lm <- lm(LBXGLU ~ BMXBMI, data = BMI_grphigh)
-BMI_high_lm
 
 
 ttest_low <- Hmisc::smean.cl.normal(BMI_grplow$LBXGLU, conf.int = 0.95)
@@ -277,169 +290,41 @@ print(BMI_high_lm_perf)
 ```
 
 
+# Linear Regression Check For BMI Low Group
+
 ```{r}
+#| title: Checking Regression Models (BMI v Fasting Glucose)
 check_model(BMI_low_lm)
+```
+
+# Linear Regression Check For BMI High Group
+### Row {height="100%"}
+```{r}
+#| title: Checking Regression Models (BMI v Fasting Glucose)
 check_model(BMI_high_lm)
 ```
+
+
+# 2x2 Table - Diabetes and Obesity
 
 ```{r}
 #| results: hide
 
 
-final_1 %>% count(LBXGLU > 125 , BMXBMI > 30) # patients with caries and obese
-final_1 %>% count(LBXGLU < 125 , BMXBMI > 30) # patients with no caries and obese
-final_1 %>% count(LBXGLU > 125 , BMXBMI < 24.9) # patients with no caries and normal BMI
-final_1 %>% count(LBXGLU < 125, BMXBMI < 24.9) # patients with caries and normal BMI
+final_1 %>% count(LBXGLU > 125 , BMXBMI > 30) # patients with diabetes and obese
+final_1 %>% count(LBXGLU < 125 , BMXBMI > 30) # patients with no diabetes and obese
+final_1 %>% count(LBXGLU > 125 , BMXBMI < 24.9) # patients with diabetes and normal BMI
+final_1 %>% count(LBXGLU < 125, BMXBMI < 24.9) # patients with no diabetes and normal BMI
+```
 
+
+```{r}
+#| title: 2x2 Table
 diabetesvobesity <- matrix(c(336, 225, 1180, 1865), nrow = 2, byrow = TRUE)
 dimnames(diabetesvobesity) <- list(c("Diabetes", "No Diabetes"), c("Obesity", "No Obesity"))
 twoby2(diabetesvobesity)
 ```
 
-
-#  {.sidebar}
-
-This dashboard displays statistics for:
-
-|              |                     |
-|--------------|---------------------|
-| **Hospital** | Grey Sloan Memorial |
-| **Unit**     | Labor and Delivery  |
-| **Month**    | X   |
-
-------------------------------------------------------------------------
-
-In X the staff breakdown in the unit was as follows:
-
-|                          |     |
-|--------------------------|-----|
-| **Attending physicians** |  14 |
-| **Residents**            |  21 |
-| **Nurses**               |  12 |
-
-------------------------------------------------------------------------
-
-::: {.callout-note collapse="true"}
-## Disclaimer
-
-This is a fictional hospital. The data are simulated based on realistic birth characteristics and risk factors from [this report by the CDC](https://www.cdc.gov/nchs/data/nvsr/nvsr72/nvsr72-01.pdf).
-:::
-
-# All
-
-```{r}
-#| label: all-values
-#| results: hide
-
-#X
-```
-
-## Row {height="20%"}
-
-```{r}
-
-```
-
-```{r}
-#| content: valuebox
-#| title: "Pre-term births"
-
-#XX
-```
-
-## Row {height="40%"}
-
-### Column {width="40%"}
-
-```{r}
-#| title: Delivery method
-
-```
-
-### Column {width="60%"}
-
-```{r}
-#| title: Maternal age
-
-```
-
-## Row {height="40%"}
-
-```{r}
-#| title: Delivery method and parity
-
-```
-
-```{r}
-#| title: Delivery method and maternal age
-
-```
-
-# Vaginal {orientation="columns"}
-
-## Column {width="60%"}
-
-```{r}
-#| label: vaginal-values
-#| results: hide
-
-```
-
-### Row {height="20%"}
-
-```{r}
-#| component: valuebox
-#| title: "Total births"
-
-```
-
-```{r}
-#| component: valuebox
-#| title: "Pre-term births"
-
-```
-
-### Row {height="40%"}
-
-```{r}
-#| title: Maternal age
-
-```
-
-### Row {height="40%" .tabset}
-
-```{r}
-#| title: Maternal age and parity
-
-
-```
-
-```{r}
-#| title: Maternal age and term
-
-#ld_v |>
-
-```
-
-## Column {width="40%"}
-
-```{r}
-#| title: Data
-
-#ld_v |>
-
-```
-
-# Caesarean {orientation="columns"}
-
-## Column {width="60%"}
-
-```{r}
-#| label: cesarean-values
-#| results: hide
-
-
-```
 
 ### Row {height="20%"}
 
@@ -482,15 +367,4 @@ This is a fictional hospital. The data are simulated based on realistic birth ch
 #| title: Data
 
 
-```
-
-# Data
-
-```{r}
-#ld |>
- # arrange(patient_id) |>
-  #datatable(
-  #  colnames = c("ID", "Maternal age", "Delivery method", "Parity", "Term"),
-   # options = list(dom = 'ftp', paging = TRUE)
-  #  )
 ```
