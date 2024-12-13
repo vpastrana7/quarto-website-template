@@ -243,7 +243,7 @@ No_carie_lm_BMI_GLU <- lm(logBMXBMI ~ logLBXGLU, data = final_GLU_BMI_nocaries)
 nocarie_lm_BMI_GLU_perf <- model_performance(No_carie_lm_BMI_GLU)
 print(nocarie_lm_BMI_GLU_perf)
 
-check_model(No_carie_lm_BMI_GLU, plot = FALSE)
+#check_model(No_carie_lm_BMI_GLU, plot = FALSE)
 
 # even after the transformations and the removal of outliers this linear model is still very poor
 # however, I am still pleased with the transformations I achieved in order to produce a normally
