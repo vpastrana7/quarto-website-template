@@ -283,6 +283,8 @@ check_model(BMI_high_lm)
 ```
 
 ```{r}
+#| results: hide
+
 
 final_1 %>% count(LBXGLU > 125 , BMXBMI > 30) # patients with caries and obese
 final_1 %>% count(LBXGLU < 125 , BMXBMI > 30) # patients with no caries and obese
