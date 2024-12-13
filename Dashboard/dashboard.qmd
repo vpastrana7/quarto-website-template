@@ -269,7 +269,6 @@ BMI_grphigh <- final_1 %>% filter(BMXBMI >= 30.7)
 BMI_low_lm <- lm(LBXGLU ~ BMXBMI, data = BMI_grplow)
 BMI_high_lm <- lm(LBXGLU ~ BMXBMI, data = BMI_grphigh)
 
-#these t tests show that there is a potential relation between the lower 40% of BMI values are only prediabetic at most while the top 40% of BMI values still suggests prediabetes, but much closer to the cutoff for diabetes (126 mg/dL) -> could suggest these patients need closer monitoring
 
 BMI_low_lm_perf <- model_performance(BMI_low_lm)
 print(BMI_low_lm_perf)
@@ -281,6 +280,8 @@ bootstrap_low <- Hmisc::smean.cl.boot(BMI_grplow$LBXGLU, conf.int = 0.95)
 bootstrap_low
 bootstrap_high <- Hmisc::smean.cl.boot(BMI_grphigh$LBXGLU, conf.int = 0.95)
 bootstrap_high
+
+#these bootstrap tests show that there is a potential relation between the lower 40% of BMI values are only prediabetic at most while the top 40% of BMI values still suggests prediabetes, but much closer to the cutoff for diabetes (126 mg/dL) -> could suggest these patients need closer monitoring
 
 ```
 
