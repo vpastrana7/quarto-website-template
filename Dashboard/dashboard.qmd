@@ -1,20 +1,16 @@
 ---
-title: "Labor and Delivery Dashboard"
+title: "NHANES Snapshot Looking at Oral Health, Fasting Glucose Levels, and BMI"
 format: 
   dashboard:
     nav-buttons: [github]
-    github: https://github.com/mine-cetinkaya-rundel/ld-dashboard
+    github: https://github.com/vpastrana7/vpastrana7.github.io
 logo: images/logo.png
 theme: [sandstone, theme/custom.scss]
 fig-width: 10
 fig-asp: 0.3
 params:
-  month: "October"
-  year: "2023"
-  # 2021 rates: https://www.cdc.gov/nchs/data/nvsr/nvsr72/nvsr72-01.pdf
-  us_cesarean_rate: 0.321 
-  us_preterm_rate:  0.1049
-  threshold_diff: 0.02
+  month: "December"
+  year: "2024"
 editor_options: 
   chunk_output_type: console
 ---
