@@ -37,6 +37,6 @@ cv:
   </a>
 </p>
 <div class="embed-container">
-  <iframe src="vmp46cv2024.pdf#toolbar=0" style="border: 0.5px;width: 100%;"></iframe>
+  <iframe src="vmp46cv2024.pdf" style="border: 0.5px;width: 100%;"></iframe>
 </div>
 ```
