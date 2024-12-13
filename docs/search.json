@@ -7,11 +7,18 @@
     "text": "Download current CV"
   },
   {
-    "objectID": "index.html",
-    "href": "index.html",
-    "title": "Welcome to my website!",
+    "objectID": "Blog/index.html",
+    "href": "Blog/index.html",
+    "title": "Blog",
     "section": "",
-    "text": "Github\n  \n  \n    \n     LinkedIn\n  \n  \n    \n     Email\n  \n\n\n\n\nWelcome to my website!\nI am Victor Pastrana-Gómez, a current student in the Medical Scientist Training Program at Case Western Reserve University.\nMy current research includes ultrasound imaging and the use of lipid based nanobubbles as contrast for use within ultrasound imaging. My project specifically includes looking at the transit of these nanobubbles and analyzing their movement in order to predict drug distribution and potential efficacy of chemotherapeutics when looking at tumor models in mice.\nIn addition to my research, I entertain myself with various hobbies. I enjoy cooking new meals, hiking, running and playing/watching football (soccer). As you explore my website, I am sure you will see examples of all of these things!\n\nMy Github Page!"
+    "text": "The Process\nFirst what I wanted to do was to look at what kind of data"
+  },
+  {
+    "objectID": "photography/index.html",
+    "href": "photography/index.html",
+    "title": "Photography",
+    "section": "",
+    "text": "As a wizard and scholar of Middle-earth, I have been studying the magic of the natural world for centuries. Through my self-portraits, I aim to capture the essence of my own being and reflect on my own journey through time. Each photograph is a reflection of my own experiences and emotions. Through my photography, I hope to offer a glimpse into my life as a scholar and adventurer, and inspire others to reflect on their own journeys through the world.\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nView the tutorial for this template (+ download link)"
   },
   {
     "objectID": "projects/index.html",
@@ -35,10 +42,10 @@
     "text": "Mini Organs in a Dish\n\nDuring my time working at Cincinnati Children’s Hospital, my main project involved using patient derived induced pluripotent stem cells (iPSCs) to develop vascularized organoids. This way we can recreate the same processes that occur in development, but in a dish!"
   },
   {
-    "objectID": "photography/index.html",
-    "href": "photography/index.html",
-    "title": "Photography",
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "Welcome to my website!",
     "section": "",
-    "text": "As a wizard and scholar of Middle-earth, I have been studying the magic of the natural world for centuries. Through my self-portraits, I aim to capture the essence of my own being and reflect on my own journey through time. Each photograph is a reflection of my own experiences and emotions. Through my photography, I hope to offer a glimpse into my life as a scholar and adventurer, and inspire others to reflect on their own journeys through the world.\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nView the tutorial for this template (+ download link)"
+    "text": "Github\n  \n  \n    \n     LinkedIn\n  \n  \n    \n     Email\n  \n\n\n\n\nWelcome to my website!\nI am Victor Pastrana-Gómez, a current student in the Medical Scientist Training Program at Case Western Reserve University.\nMy current research includes ultrasound imaging and the use of lipid based nanobubbles as contrast for use within ultrasound imaging. My project specifically includes looking at the transit of these nanobubbles and analyzing their movement in order to predict drug distribution and potential efficacy of chemotherapeutics when looking at tumor models in mice.\nIn addition to my research, I entertain myself with various hobbies. I enjoy cooking new meals, hiking, running and playing/watching football (soccer). As you explore my website, I am sure you will see examples of all of these things!\n\nMy Github Page!"
   }
 ]

@@ -224,7 +224,7 @@ carie_lm_BMI_GLU <- lm(logBMXBMI ~ logLBXGLU, data = final_GLU_BMI)
 carie_lm_BMI_GLU_perf <- model_performance(carie_lm_BMI_GLU)
 print(carie_lm_BMI_GLU_perf)
 
-check_model(carie_lm_BMI_GLU)
+check_model(carie_lm_BMI_GLU, plot = FALSE)
 
 # even after the transformations and the removal of outliers this linear model is still very poor
 # however, I am still pleased with the transformations I achieved in order to produce a normally
@@ -243,7 +243,7 @@ No_carie_lm_BMI_GLU <- lm(logBMXBMI ~ logLBXGLU, data = final_GLU_BMI_nocaries)
 nocarie_lm_BMI_GLU_perf <- model_performance(No_carie_lm_BMI_GLU)
 print(nocarie_lm_BMI_GLU_perf)
 
-check_model(No_carie_lm_BMI_GLU)
+check_model(No_carie_lm_BMI_GLU, plot = FALSE)
 
 # even after the transformations and the removal of outliers this linear model is still very poor
 # however, I am still pleased with the transformations I achieved in order to produce a normally
@@ -290,20 +290,18 @@ print(BMI_high_lm_perf)
 ```
 
 
-# Linear Regression Check For BMI Low Group
 
 ```{r}
 #| title: Checking Regression Models (BMI v Fasting Glucose)
+#| results: hide
 check_model(BMI_low_lm)
 ```
 
-# Linear Regression Check For BMI High Group
-### Row {height="100%"}
 ```{r}
 #| title: Checking Regression Models (BMI v Fasting Glucose)
+#| results: hide
 check_model(BMI_high_lm)
 ```
-
 
 # 2x2 Table - Diabetes and Obesity
 
@@ -326,45 +324,3 @@ twoby2(diabetesvobesity)
 ```
 
 
-### Row {height="20%"}
-
-```{r}
-#| component: valuebox
-#| title: "Total births"
-
-#f
-```
-
-```{r}
-#| component: valuebox
-#| title: "Pre-term births"
-
-```
-
-### Row {height="40%"}
-
-```{r}
-#| title: Maternal age
-
-```
-
-### Row {height="40%" .tabset}
-
-```{r}
-#| title: Maternal age and parity
-
-```
-
-```{r}
-#| title: Maternal age and term
-
-
-```
-
-## Column {width="40%"}
-
-```{r}
-#| title: Data
-
-
-```
