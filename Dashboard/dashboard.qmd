@@ -210,7 +210,7 @@ geom_violin(aes(fill = logLBXGLU)) +
 geom_boxplot(width = 0.3, outlier.size = 4) + coord_flip()
 ```
 
-# Caries BMI + Fasting Glucose
+# Caries BMI + Fasting Glucose - Linear Regression
 
 ### Row {height="40%"}
 ```{r}
@@ -269,12 +269,12 @@ BMI_grphigh <- final_1 %>% filter(BMXBMI >= 30.7)
 BMI_low_lm <- lm(LBXGLU ~ BMXBMI, data = BMI_grplow)
 BMI_high_lm <- lm(LBXGLU ~ BMXBMI, data = BMI_grphigh)
 
+#these t tests show that there is a potential relation between the lower 40% of BMI values are only prediabetic at most while the top 40% of BMI values still suggests prediabetes, but much closer to the cutoff for diabetes (126 mg/dL) -> could suggest these patients need closer monitoring
 
-ttest_low <- Hmisc::smean.cl.normal(BMI_grplow$LBXGLU, conf.int = 0.95)
-ttest_low
-ttest_high <- Hmisc::smean.cl.normal(BMI_grphigh$LBXGLU, conf.int = 0.95)
-ttest_high #these t tests show that there is a potential relation between the lower 40% of BMI values            are only prediabetic at most while the top 40% of BMI values still suggests prediabetes, but much closer to the cutoff for diabetes (126 mg/dL) -> could suggest these patients need closer monitoring
-
+BMI_low_lm_perf <- model_performance(BMI_low_lm)
+print(BMI_low_lm_perf)
+BMI_high_lm_perf <- model_performance(BMI_high_lm)
+print(BMI_high_lm_perf)
 
 set.seed(77)
 bootstrap_low <- Hmisc::smean.cl.boot(BMI_grplow$LBXGLU, conf.int = 0.95)
@@ -282,11 +282,6 @@ bootstrap_low
 bootstrap_high <- Hmisc::smean.cl.boot(BMI_grphigh$LBXGLU, conf.int = 0.95)
 bootstrap_high
 
-
-BMI_low_lm_perf <- model_performance(BMI_low_lm)
-print(BMI_low_lm_perf)
-BMI_high_lm_perf <- model_performance(BMI_high_lm)
-print(BMI_high_lm_perf)
 ```
 
 
